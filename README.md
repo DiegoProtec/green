@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/DiegoProtec/green/actions/workflows/gradle.yml/badge.svg)](https://github.com/DiegoProtec/green/actions/workflows/gradle.yml)
+
 # green
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
