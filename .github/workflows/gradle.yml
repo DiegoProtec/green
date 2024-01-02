@@ -14,7 +14,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
+  contents: read-all|write-all
 
 env:
   REGISTRY: ghcr.io
