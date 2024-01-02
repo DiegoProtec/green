@@ -13,6 +13,8 @@ val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
+    implementation("io.quarkus:quarkus-kubernetes")
+    implementation("io.quarkiverse.helm:quarkus-helm:1.2.1")
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-arc")
@@ -21,7 +23,7 @@ dependencies {
 }
 
 group = "org.contecin"
-version = "1.0.0-SNAPSHOT"
+version = "v0.0.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
