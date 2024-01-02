@@ -55,5 +55,5 @@ jobs:
         context: .
         file: ./src/main/docker/Dockerfile.jvm
         push: true
-        tags: ${{ steps.meta.outputs.tags }} , latest
+        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
