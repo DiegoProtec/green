@@ -1,7 +1,7 @@
 {{/* Template de rules do green-ingress */}}
 
 {{- define "chart" -}}
-{{- print-f "%s-%s" .Chart.Name .Chart.Version | replace "+" "-" | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "name" -}}
@@ -16,7 +16,7 @@
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- print-f "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -24,6 +24,9 @@
 {{- define "labels" -}}
 helm.sh/chart: {{ include "chart" . }}
 {{ include "selectorLabels" . }}
+{{- if .Values.app.partOf }}
+app.kubernetes.io/part-of: {{ .Values.app.partOf }}
+{{- end}}
 {{- if .Values.app.version }}
 app.kubernetes.io/version: {{ .Values.app.version | quote }}
 {{- end}}
