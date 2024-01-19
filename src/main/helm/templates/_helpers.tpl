@@ -1,39 +1,41 @@
-{{/* Template de rules do green-ingress */}}
+{{/*
+DEPLOYMENT< */}}
 
-{{- define "chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "name" -}}
-{{ default .Chart.Name .Values.app.name | trunc 63 | trimSuffix "-" }}
+{{- define "recreate" -}}
+strategy:
+  type: Recreate
 {{- end }}
 
-{{- define "fullname" -}}
-{{ if .Values.app.fullname }}
-{{ .Values.app.fullname | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.app.name }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- define "rollingUpdate" -}}
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: {{ default 1 .surge }}
+    maxUnavailable: {{ default 0 .unavailable }}
+{{- end }}
+
+{{/*
+deployment-strategy */}}
+{{- define "strategy" -}}
+{{- if and .Values.app.strategy.type }}
+{{- $strategy := .Values.app.strategy }}
+{{- if eq ($strategy.type | upper) "RECREATE" }}
+{{- include "recreate" . }}
+{{- end }}
+{{- if hasPrefix ($strategy.type | upper) "ROLLING" }}
+{{- include "rollingUpdate" $strategy }}
 {{- end }}
 {{- end }}
 {{- end }}
 
-{{- define "labels" -}}
-helm.sh/chart: {{ include "chart" . }}
-{{ include "selectorLabels" . }}
-{{- if .Values.app.partOf }}
-app.kubernetes.io/part-of: {{ .Values.app.partOf }}
-{{- end}}
-{{- if .Values.app.version }}
-app.kubernetes.io/version: {{ .Values.app.version | quote }}
-{{- end}}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{/*
+deployment-replicas */}}
+{{- define "replicas" -}}
+{{ default 1 .Values.app.replicas }}
+{{- if and .Values.app.strategy.type (ne .Values.app.strategy.type "none") }}
+{{- include "strategy" . | nindent 2 }}
+{{- end }}
 {{- end }}
 
-{{- define "selectorLabels" -}}
-app.kubernetes.io/name: {{ include "name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
+{{/*
+>DEPLOYMENT */}}
